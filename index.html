@@ -120,7 +120,7 @@
 
                 </template>
             </amp-list>
-            <hr>
+            
         </main>
 
 
@@ -149,7 +149,7 @@
         function displayComments() {
             db.collection('comments').find({}, { limit: 1000 }).asArray()
                 .then(docs => {
-                    const html = docs.map(c => "<div id='comment'>" + c.comment + "</div>").join("");
+                    const html = docs.map(c => "<div id='comment'>" + c.comment + "</div><hr>").join("");
                     document.getElementById("comments").innerHTML = html;
                 });
         }
