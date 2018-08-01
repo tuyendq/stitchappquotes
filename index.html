@@ -1,0 +1,177 @@
+<!doctype html>
+<html amp lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Quotes that Change</title>
+    <link rel="canonical" href="http://example.ampproject.org/quote.html">
+    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+    <script async src="https://cdn.ampproject.org/v0.js"></script>
+    <script async custom-template="amp-mustache" src="https://cdn.ampproject.org/v0/amp-mustache-0.2.js"></script>
+
+    <script type="application/ld+json">
+      {
+        "@context": "http://schema.org",
+        "@type": "NewsArticle",
+        "headline": "Quotes that Change",
+        "datePublished": "2018-08-07T12:02:41Z",
+        "image": [
+          "logo.jpg"
+        ]
+      }
+    </script>
+    <style amp-boilerplate>
+        body {
+            -webkit-animation: -amp-start 8s steps(1, end) 0s 1 normal both;
+            -moz-animation: -amp-start 8s steps(1, end) 0s 1 normal both;
+            -ms-animation: -amp-start 8s steps(1, end) 0s 1 normal both;
+            animation: -amp-start 8s steps(1, end) 0s 1 normal both
+        }
+
+        @-webkit-keyframes -amp-start {
+            from {
+                visibility: hidden
+            }
+            to {
+                visibility: visible
+            }
+        }
+
+        @-moz-keyframes -amp-start {
+            from {
+                visibility: hidden
+            }
+            to {
+                visibility: visible
+            }
+        }
+
+        @-ms-keyframes -amp-start {
+            from {
+                visibility: hidden
+            }
+            to {
+                visibility: visible
+            }
+        }
+
+        @-o-keyframes -amp-start {
+            from {
+                visibility: hidden
+            }
+            to {
+                visibility: visible
+            }
+        }
+
+        @keyframes -amp-start {
+            from {
+                visibility: hidden
+            }
+            to {
+                visibility: visible
+            }
+        }
+    </style>
+    <style amp-custom>
+        body {
+            background-color: #3983ac;
+            color: whitesmoke;
+        }
+
+        #container {
+            margin: 0 auto;
+            padding: 1rem;
+        }
+
+        @media screen and (min-width: 48rem) {
+            #container {
+                width: 48rem;
+            }
+        }
+    </style>
+    <noscript>
+        <style amp-boilerplate>
+            body {
+                -webkit-animation: none;
+                -moz-animation: none;
+                -ms-animation: none;
+                animation: none
+            }
+        </style>
+    </noscript>
+</head>
+
+<body onload="displayCommentsOnLoad()">
+    <div id="container">
+        <header>
+            <nav>
+
+            </nav>
+        </header>
+        <main>
+            <h1>Quotes that change your own life</h1>
+            <div id="content">
+                <p>Share quotes that change your own life</p>
+            </div>
+            <input id="new_comment">
+            <input type="submit" onClick="addComment()">
+            <hr>
+            <div id="comments"></div>
+            <amp-list class="comments mt1" 
+                width="auto"
+                height="auto"
+                layout="responsive">
+                <template type="amp-mustache">
+
+                </template>
+            </amp-list>
+            <hr>
+        </main>
+
+
+        <aside>
+
+        </aside>
+
+        <footer>
+
+        </footer>
+
+    </div>
+
+    <script src="https://s3.amazonaws.com/stitch-sdks/js/bundles/4.0.0/stitch.js"></script>
+    <script>
+        const client = stitch.Stitch.initializeDefaultAppClient('blog_comments-tauaj');
+        const db = client.getServiceClient(stitch.RemoteMongoClient.factory, "mongodb-atlas").db('blog');
+
+        function displayCommentsOnLoad() {
+            client.auth
+                .loginWithCredential(new stitch.AnonymousCredential())
+                .then(displayComments)
+                .catch(console.error);
+        }
+
+        function displayComments() {
+            db.collection('comments').find({}, { limit: 1000 }).asArray()
+                .then(docs => {
+                    const html = docs.map(c => "<div id='comment'>" + c.comment + "</div>").join("");
+                    document.getElementById("comments").innerHTML = html;
+                });
+        }
+
+        function addComment() {
+            const commentEl = document.getElementById('new_comment');
+            const comment = {
+                owner_id: client.auth.user.id,
+                comment: commentEl.value
+            }
+            db.collection('comments').insertOne(comment)
+                .then(displayComments);
+            commentEl.value = '';
+        }
+
+    </script>
+</body>
+
+</html>
